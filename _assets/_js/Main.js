@@ -46,6 +46,8 @@ function init()
 	control.allowY = true;
 	control.allow = true;
 
+	control.signal = false;
+
 	hitTest_init();
 
 	loopList = new Array();
@@ -63,12 +65,16 @@ function move_init(run)
 {
 	if(run)
 	{
+		control.signal = true;
+
 		$(window)[0].addEventListener("keydown", move_event, false);
 		$(window)[0].addEventListener("keyup", move_event, false);
 	}
 
 	else
 	{
+		control.signal = false;
+
 		$(window)[0].removeEventListener("keydown", move_event, false);
 		$(window)[0].removeEventListener("keyup", move_event, false);
 	}
@@ -213,11 +219,21 @@ function onEnterFrame_dirs()
 
 	if(HIT_TEST.hit_edge)
 	{
+		control.signal = false;
+
 		control.fl.tx = control.fl.cx;
 		control.fl.ty = control.fl.cy;
 
 		// control.allowX = false;
 		// control.allowY = false;
+	}
+
+	else
+	{
+		if(!control.signal)
+		{
+			control.signal = true;
+		}
 	}
 
 ////////////////////////////////

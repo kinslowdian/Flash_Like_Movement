@@ -20,22 +20,37 @@
 
 <div class="wrapper">
 
-	<div class="screen">
+	<div class="screen field-floor-ice">
 
 		<div class="layer-border">
 
-			<div class="border-t border collideCheck-field" data-npc="edge"></div>
-			<div class="border-b border collideCheck-field" data-npc="edge"></div>
-			<div class="border-l border collideCheck-field" data-npc="edge"></div>
-			<div class="border-r border collideCheck-field" data-npc="edge"></div>
+			<div class="border-t border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
+			<div class="border-b border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
+			<div class="border-l border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
+			<div class="border-r border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
 
-			<div class="border-m border collideCheck-field" data-npc="edge"></div>
+			<div class="border-m border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
 
 		</div>
 
 		<div class="layer-player">
 
-		<div class="player collideCheck-player"></div>
+		<div class="player collideCheck-player">
+
+			<div class="player-sprite">
+
+				<div class="map-goat-head pixels_map_player tween-map-goat-head"></div>
+
+				<div class="map-goat-hand-L pixels_map_player tween-map-goat-hand-L"></div>
+				<div class="map-goat-hand-R pixels_map_player tween-map-goat-hand-R"></div>
+
+				<div class="map-goat-body pixels_map_player"></div>
+
+				<div class="map-goat-legs pixels_map_player tween-mapPlayerWalk_loop"></div>
+
+			</div>
+
+		</div>
 
 		</div>
 
