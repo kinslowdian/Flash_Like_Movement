@@ -1,0 +1,138 @@
+@charset "UTF-8";
+
+*
+{
+	margin: 0;
+	padding: 0;
+
+	outline: none;
+	border: none;
+}
+
+.status
+{
+	width: 100px;
+
+	position: absolute;
+
+	font-size: 30px;
+	font-family: sans-serif;
+	font-weight: lighter;
+	color: #fff;
+}
+
+.status p
+{
+	font-size: 1em;
+	letter-spacing: 0.03em;
+	padding: 0.4em;
+	display: inline-block;
+	background: #000;
+	text-transform: uppercase;
+}
+
+.wrapper
+{
+	width: 100%;
+	height: 100%;
+
+	background: #69D2E7;
+
+	overflow: hidden;
+
+	position: absolute;
+
+	left: 0; right: 0; top: 0; bottom: 0;
+
+	margin: auto;
+}
+
+.screen
+{
+	width: 320px;
+	height: 2000px;
+
+	background: #A7DBD8;
+
+	position: absolute;
+
+	left: 0; right: 0; top: 0; bottom: 0;
+
+	margin: 0 auto;
+}
+
+.layer-player
+{
+	width: inherit;
+	height: inherit;
+
+	position: absolute;
+}
+
+.player
+{
+	width: 40px;
+	height: 40px;
+
+	background: #F38630;
+
+	position: absolute;
+}
+
+.layer-border
+{
+	width: inherit;
+	height: inherit;
+
+	position: absolute;
+
+	left: 0; right: 0; top: 0; bottom: 0;
+}
+
+.border
+{
+	position: absolute;
+
+	background: #fff;
+}
+
+.border-t
+{
+	width: inherit;
+	height: 40px;
+
+	left: 0; top: -40px;
+}
+
+.border-b
+{
+	width: inherit;
+	height: 40px;
+
+	left: 0; top: 500px;
+}
+
+.border-l
+{
+	width: 40px;
+	height: inherit;
+
+	left: -40px; top: 0px;
+}
+
+.border-r
+{
+	width: 40px;
+	height: inherit;
+
+	left: 320px; top: 0px;
+}
+
+.border-m
+{
+	width: 120px;
+	height: 120px;
+
+	left: 100px;
+	top: 120px;
+}
