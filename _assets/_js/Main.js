@@ -20,6 +20,12 @@ function init()
 	control.fl.vx = 0;
 	control.fl.vy = 0;
 
+
+	// SAFE X Y
+	control.fl.sx = 0;
+	control.fl.sy = 0;
+
+
 	// TARGET X Y
 	control.fl.tx = 0;
 	control.fl.ty = 0;
@@ -33,8 +39,8 @@ function init()
 	control.fl.y = 0;
 
 	// STORE X Y
-	control.fl.cx = 0;
-	control.fl.cy = 0;
+	// control.fl.cx = 0;
+	// control.fl.cy = 0;
 
 	// MOVE EASING
 	control.fl.move = 4;
@@ -42,23 +48,23 @@ function init()
 
 	control.dir = "";
 
-	control.allowX = true;
-	control.allowY = true;
-	control.allow = true;
-
-	control.signal = false;
-
 	hitTest_init();
 
 	loopList = new Array();
 	loopList.push(onEnterFrame_dirs);
 	loopList.push(onEnterFrame_hitTest);
 	loopList.push(onEnterFrame_move);
-	loopList.push(onEnterFrame_store);
 
 	window.requestAnimationFrame(onEnterFrame);
 
 	move_init(true);
+}
+
+function hitTest_init()
+{
+	HIT_TEST = {};
+
+	HIT_TEST.hit_edge = false;
 }
 
 function move_init(run)
@@ -86,7 +92,7 @@ function move_event(event)
 	{
 		control.dir = "STILL";
 
-		control.allow = false;
+		// control.allow = false;
 	}
 
 	if(event.type === "keydown")
@@ -149,161 +155,34 @@ function onEnterFrame()
 
 function onEnterFrame_dirs()
 {
+	var css;
+
 	if(control.dir === "UP")
 	{
-		control.fl.ty -= control.fl.move;
+		control.fl.sy -= control.fl.move;
 	}
 
-	if(control.dir === "DOWN")
+	else if(control.dir === "DOWN")
 	{
-		control.fl.ty += control.fl.move;
+		control.fl.sy += control.fl.move;
 	}
 
 	if(control.dir === "LEFT")
 	{
-		control.fl.tx -= control.fl.move;
+		control.fl.sx -= control.fl.move;
 	}
 
-	if(control.dir === "RIGHT")
+	else if(control.dir === "RIGHT")
 	{
-		control.fl.tx += control.fl.move;
+		control.fl.sx += control.fl.move;
 	}
 
-	control.fl.dx = control.fl.tx - control.fl.x;
-	control.fl.dy = control.fl.ty - control.fl.y;
-
-	// MET TARGET X (0px)
-	if(Math.abs(control.fl.dx) < 1)
-	{
-		control.fl.x = control.fl.tx;
-
-		// CANCEL UPDATE LOGIC FOR X
-		control.allowX = false;
-	}
-
-	// STILL TRAVEL
-	else
-	{
-		control.fl.vx = control.fl.dx * control.fl.easing;
-		control.fl.x += control.fl.vx;
-
-		if(!control.allowX)
-		{
-			control.allowX = true;
-		}
-	}
-
-
-	// MET TARGET Y (0px)
-	if(Math.abs(control.fl.dy) < 1)
-	{
-		control.fl.y = control.fl.ty;
-
-		// CANCEL UPDATE LOGIC FOR Y
-		control.allowY = false;
-	}
-
-	// STILL TRAVEL
-	else
-	{
-		control.fl.vy = control.fl.dy * control.fl.easing;
-		control.fl.y += control.fl.vy;
-
-		if(!control.allowY)
-		{
-			control.allowY = true;
-		}
-	}
-
-/////////////////////////////////
-
-	if(HIT_TEST.hit_edge)
-	{
-		control.signal = false;
-
-		control.fl.tx = control.fl.cx;
-		control.fl.ty = control.fl.cy;
-
-		// control.allowX = false;
-		// control.allowY = false;
-	}
-
-	else
-	{
-		if(!control.signal)
-		{
-			control.signal = true;
-		}
-	}
-
-////////////////////////////////
-
-
-
-	// // CANCEL UPDATE LOGIC FOR X & Y
-	if(!control.allowX && !control.allowY)
-	{
-		control.allow = false;
-	}
-
-	else
-	{
-		control.allow = true;
-	}
-}
-
-function onEnterFrame_move()
-{
-	var css;
-
-	if(control.allow)
-	{
-		css = 	{
-					"-webkit-transform"	: "translate(" + control.fl.x + "px, " + control.fl.y + "px)",
-					"transform"			: "translate(" + control.fl.x + "px, " + control.fl.y + "px)"
+	css = {
+					"-webkit-transform"	: "translate(" + control.fl.sx + "px, " + control.fl.sy + "px)",
+					"transform"			: "translate(" + control.fl.sx + "px, " + control.fl.sy + "px)"
 				};
 
-		$(".player").css(css);
-	}
-}
-
-function onEnterFrame_store()
-{
-	var hitSafetyX = 0;
-	var hitSafetyY = 0;
-
-	if(!HIT_TEST.hit_edge)
-	{
-		if(control.dir === "UP")
-		{
-			hitSafetyY = (control.fl.move + 1);
-		}
-
-		if(control.dir === "DOWN")
-		{
-			hitSafetyY = -(control.fl.move + 1);
-		}
-
-		if(control.dir === "LEFT")
-		{
-			hitSafetyX = (control.fl.move + 1);
-		}
-
-		if(control.dir === "RIGHT")
-		{
-			hitSafetyX = -(control.fl.move + 1);
-		}
-
-		control.fl.cx = (control.fl.x + hitSafetyX);
-		control.fl.cy = (control.fl.y + hitSafetyY);
-	}
-}
-
-function hitTest_init()
-{
-	HIT_TEST = {};
-
-	HIT_TEST.hit_edge = false;
+	$(".hitTest").css(css);
 }
 
 function onEnterFrame_hitTest()
@@ -325,6 +204,73 @@ function onEnterFrame_hitTest()
 
 	$(".status p").html(HIT_TEST.hit_edge.toString());
 }
+
+
+function onEnterFrame_move()
+{
+	var css;
+
+	if(!HIT_TEST.hit_edge)
+	{
+		if(control.fl.tx != control.fl.sx)
+		{
+			control.fl.tx = control.fl.sx;
+		}
+
+		if(control.fl.ty != control.fl.sy)
+		{
+			control.fl.ty = control.fl.sy;
+		}
+
+		// control.fl.tx = control.fl.sx;
+		// control.fl.ty = control.fl.sy;
+
+
+		control.fl.dx = control.fl.tx - control.fl.x;
+		control.fl.dy = control.fl.ty - control.fl.y;
+
+		// MET TARGET X (0px)
+		if(Math.abs(control.fl.dx) < 1)
+		{
+			control.fl.x = Math.floor(control.fl.tx);
+		}
+
+		else
+		{
+			control.fl.vx = control.fl.dx * control.fl.easing;
+			control.fl.x += control.fl.vx;
+		}
+
+		// MET TARGET Y (0px)
+		if(Math.abs(control.fl.dy) < 1)
+		{
+			control.fl.y = Math.floor(control.fl.ty);
+		}
+
+		else
+		{
+			control.fl.vy = control.fl.dy * control.fl.easing;
+			control.fl.y += control.fl.vy;
+		}
+
+
+
+		css = 	{
+							"-webkit-transform"	: "translate(" + control.fl.x + "px, " + control.fl.y + "px)",
+							"transform"			: "translate(" + control.fl.x + "px, " + control.fl.y + "px)"
+						};
+
+		$(".player").css(css);
+	}
+
+	else
+	{
+		HIT_TEST.hit_edge = false;
+	}
+}
+
+
+
 
 
 

@@ -71,7 +71,7 @@
 	position: absolute;
 }
 
-.player
+.player, .hitTest
 {
 	width: 40px;
 	height: 40px;
@@ -79,6 +79,11 @@
 /*	background: #F38630;*/
 
 	position: absolute;
+}
+
+.hitTest
+{
+	background: rgba(0, 255, 0, 0.4);
 }
 
 .layer-border
