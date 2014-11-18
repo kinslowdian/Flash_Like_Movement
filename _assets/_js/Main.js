@@ -2,9 +2,14 @@ var trace = function(msg){ console.log(msg); };
 
 var control;
 
+var loopRun;
 var loopList;
 
 var HIT_TEST;
+
+var portalTarget;
+
+var portalArr = new Array();
 
 var Control = function()
 {
@@ -24,7 +29,7 @@ Control.prototype.init = function()
 	this.fl.x = 0;
 	this.fl.y = 0;
 
-	this.fl.move = 2;
+	this.fl.move = 4;
 	this.fl.moveX = 0;
 	this.fl.moveY = 0;
 
@@ -32,6 +37,27 @@ Control.prototype.init = function()
 
 	this.dir = "";
 }
+
+var FakePortal = function(settings)
+{
+	this.settings = {};
+	this.settings = settings;
+}
+
+FakePortal.prototype.build = function()
+{
+	this.id	= this.settings.id;
+	this.x 	= this.settings.x;
+	this.y 	= this.settings.y;
+	this.w 	= this.settings.w;
+	this.h 	= this.settings.h;
+	this.n	= this.settings.n;
+	this.e 	= this.settings.e;
+
+	this.x_mid = this.settings.x + 20;
+	this.y_mid = this.settings.y + 20;
+}
+
 
 $(document).ready(function(){ init(); });
 
@@ -50,11 +76,32 @@ function init()
 	loopList.push(hack_hitTest);
 	loopList.push(onEnterFrame_move);
 
+	loopRun = false;
 
+	var p = new FakePortal({x:240, y:440, w:80, h:80, n:0, e:1, id:"portal_0"});
 
-	window.requestAnimationFrame(onEnterFrame);
+	p.build();
+
+	portalArr.push(p);
+
+	onEnterFrame_init(true);
 
 	move_init(true);
+}
+
+function onEnterFrame_init(run)
+{
+	if(run)
+	{
+		loopRun = true;
+		window.requestAnimationFrame(onEnterFrame);
+	}
+
+	else
+	{
+		loopRun = false;
+		window.cancelAnimationFrame(onEnterFrame);
+	}
 }
 
 
@@ -63,6 +110,7 @@ function hitTest_init()
 	HIT_TEST = {};
 
 	HIT_TEST.hit_edge = false;
+	HIT_TEST.hit_portal = false;
 }
 
 function move_init(run)
@@ -149,7 +197,10 @@ function onEnterFrame()
 		loopList[i]();
 	}
 
-	window.requestAnimationFrame(onEnterFrame);
+	if(loopRun)
+	{
+		window.requestAnimationFrame(onEnterFrame);
+	}
 }
 
 function onEnterFrame_direction()
@@ -165,7 +216,7 @@ function onEnterFrame_direction()
 			}
 		}
 
-		else if(control.dir === "DOWN")
+		if(control.dir === "DOWN") //else if
 		{
 			if(control.fl.y == control.fl.target_y)
 			{
@@ -183,7 +234,7 @@ function onEnterFrame_direction()
 			}
 		}
 
-		else if(control.dir === "RIGHT")
+		if(control.dir === "RIGHT") //else if
 		{
 			if(control.fl.x == control.fl.target_x)
 			{
@@ -210,6 +261,15 @@ function hack_hitTest()
 			HIT_TEST.hit_edge = true;
 
 			control.signal = false;
+		}
+
+		else if($(HIT_TEST.hits[0]).attr("data-npc") === "portal")
+		{
+			HIT_TEST.hit_portal = true;
+
+			control.signal = false;
+
+			HIT_TEST.hit_portal_id = HIT_TEST.hits[0].id;
 		}
 	}
 
@@ -256,6 +316,18 @@ function hack_hitTest_update()
 		control.fl.target_safe_x = control.fl.target_x;
 		control.fl.target_safe_y = control.fl.target_y;
 	}
+
+	if(HIT_TEST.hit_portal)
+	{
+		onEnterFrame_init(false);
+
+		temp_findPortal();
+	}
+
+	else
+	{
+
+	}
 }
 
 
@@ -294,24 +366,93 @@ function onEnterFrame_move()
 {
 	var css;
 
-	if(control.fl.x != control.fl.target_x)
+	if(!HIT_TEST.hit_portal)
 	{
-		// ADD NORMAL MOVEMENT
-		control.fl.x += control.fl.moveX;
+		if(control.fl.x != control.fl.target_x)
+		{
+			// ADD NORMAL MOVEMENT
+			control.fl.x += control.fl.moveX;
+		}
+
+		if(control.fl.y != control.fl.target_y)
+		{
+			// ADD NORMAL MOVEMENT
+			control.fl.y += control.fl.moveY;
+		}
+
+		css = {
+						"-webkit-transform"	: "translate(" + control.fl.x + "px, " + control.fl.y + "px)",
+						"transform"					: "translate(" + control.fl.x + "px, " + control.fl.y + "px)"
+					};
+
+		$(".player").css(css);
 	}
-
-	if(control.fl.y != control.fl.target_y)
-	{
-		// ADD NORMAL MOVEMENT
-		control.fl.y += control.fl.moveY;
-	}
-
-	css = {
-					"-webkit-transform"	: "translate(" + control.fl.x + "px, " + control.fl.y + "px)",
-					"transform"					: "translate(" + control.fl.x + "px, " + control.fl.y + "px)"
-				};
-
-	$(".player").css(css);
-
 }
+
+
+
+function temp_findPortal()
+{
+	for(var i in portalArr)
+	{
+		if(HIT_TEST.hit_portal_id === portalArr[i].id)
+		{
+			portalTarget = portalArr[i];
+
+			break;
+		}
+	}
+
+	temp_autoMove_init("PORTAL_ENTER");
+}
+
+function temp_autoMove_init(moveRequest)
+{
+	var moveTypes = {
+
+		"PORTAL_ENTER"	: function()
+		{
+			var css = {};
+
+			css.x = portalTarget.x_mid;
+			css.y = portalTarget.y_mid;
+			css.write = {};
+
+			$(".player").addClass("tween-player");
+
+			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event, false);
+			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event, false);
+
+			css.write = 	{
+												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
+												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
+												"opacity"						: "0"
+										};
+
+			$(".player").css(css.write);
+		},
+
+		"PORTAL_EXIT"		: function()
+		{
+
+		}
+
+	};
+
+	if(typeof moveTypes[moveRequest] === "function")
+	{
+		return moveTypes[moveRequest]();
+	}
+}
+
+function temp_autoMove_event(event)
+{
+	$(".player")[0].removeEventListener("webkitTransitionEnd", temp_autoMove_event, false);
+	$(".player")[0].removeEventListener("transitionend", temp_autoMove_event, false);
+
+	$(".player").removeClass("tween-player");
+}
+
+
+
 
