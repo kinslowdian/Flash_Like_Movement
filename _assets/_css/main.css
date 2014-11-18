@@ -222,5 +222,8 @@
 
 @media screen and (min-width:600px)
 {
-	visibility: visible;
+	.status
+	{
+		visibility: visible;
+	}
 }

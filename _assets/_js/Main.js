@@ -55,6 +55,33 @@ Control.prototype.writePosition = function(placement)
 	this.fl.moveY 				= 0;
 }
 
+Control.prototype.touch_init = function(touchArea)
+{
+	this.touchArea = touchArea;
+	this.firstTouch = true;
+	this.enableTouch = true;
+
+	this.touchData = {};
+
+	this.touchData.moveDirection = "";
+	this.touchData.indicator			= "";
+
+	this.touchData.x_measure 		= $("#" + this.touchArea).width();
+	this.touchData.y_measure 		= $("#" + this.touchArea).height();
+}
+
+Control.prototype.touch_setOffset = function()
+{
+	this.touchData.offset = $("#" + this.touchArea).offset();
+}
+
+Control.prototype.touch_reset = function()
+{
+	this.dir = "STILL";
+	this.touchData.x_percent 		= 0;
+	this.touchData.y_percent 		= 0;
+}
+
 var FakePortal = function(settings)
 {
 	this.settings = {};
@@ -150,9 +177,9 @@ function move_init(run)
 		$(window)[0].addEventListener("keyup", move_event, false);
 
 		// TouchUI.js
-		$("#touchPad-full")[0].addEventListener("touchstart", touchFind, false);
-		$("#touchPad-full")[0].addEventListener("touchmove", touchFind, false);
-		$("#touchPad-full")[0].addEventListener("touchend", touchFind, false);
+		$("#touchPad-full")[0].addEventListener("touchstart", touch_find, false);
+		$("#touchPad-full")[0].addEventListener("touchmove", touch_find, false);
+		$("#touchPad-full")[0].addEventListener("touchend", touch_find, false);
 	}
 
 	else
@@ -163,9 +190,9 @@ function move_init(run)
 		$(window)[0].removeEventListener("keyup", move_event, false);
 
 		// TouchUI.js
-		$("#touchPad-full")[0].removeEventListener("touchstart", touchFind, false);
-		$("#touchPad-full")[0].removeEventListener("touchmove", touchFind, false);
-		$("#touchPad-full")[0].removeEventListener("touchend", touchFind, false);
+		$("#touchPad-full")[0].removeEventListener("touchstart", touch_find, false);
+		$("#touchPad-full")[0].removeEventListener("touchmove", touch_find, false);
+		$("#touchPad-full")[0].removeEventListener("touchend", touch_find, false);
 	}
 }
 
@@ -225,6 +252,15 @@ function move_event(event)
 			control.dir = tempSignal;
 		}
 	}
+}
+
+function move_reset()
+{
+	hitTest_init();
+
+	control.signal = true;
+
+	onEnterFrame_init(true);
 }
 
 function onEnterFrame()
@@ -582,6 +618,7 @@ function temp_autoMove_event_exit(event)
 	$(".player").removeClass("tween-player");
 
 	// PLUG CONTROLS
+	move_reset();
 }
 
 

@@ -1,175 +1,131 @@
-var CONTROL_SIGNAL;
-
-var TouchControl = function(id)
-{
-	this.touchArea = id;
-	this.firstTouch = true;
-	this.enableTouch = true;
-
-	this.data = {};
-}
-
-TouchControl.prototype.init = function()
-{
-	this.data.moveDirection = "";
-	this.data.indicator			= "";
-
-	this.data.x_measure 		= $("#" + this.touchArea).width();
-	this.data.y_measure 		= $("#" + this.touchArea).height();
-}
-
-// CALL SHOULD DEVICE ROTATE TOO
-TouchControl.prototype.setOffset = function()
-{
-	this.data.offset = $("#" + this.touchArea).offset();
-}
-
-TouchControl.prototype.reset = function()
-{
-	this.data.moveDirection = "STILL";
-	this.data.x_percent 		= 0;
-	this.data.y_percent 		= 0;
-}
-
-
-
 function touch_init()
 {
-	CONTROL_SIGNAL = new TouchControl("touchPad-full");
-	CONTROL_SIGNAL.init();
+	control.touch_init("touchPad-full");
 }
 
-function touchFind(event)
+function touch_find(event)
 {
 	event.preventDefault();
 
 	if(event.type === "touchstart" || event.type === "touchmove")
 	{
-		if(!CONTROL_SIGNAL.data.offset) //  === "NONE"
+		if(!control.touchData.offset)
 		{
-			CONTROL_SIGNAL.setOffset();
+			control.touch_setOffset();
 		}
 
-		CONTROL_SIGNAL.data.x = event.targetTouches[0].pageX - CONTROL_SIGNAL.data.offset.left;
-		CONTROL_SIGNAL.data.y = event.targetTouches[0].pageY - CONTROL_SIGNAL.data.offset.top;
+		control.touchData.x = event.targetTouches[0].pageX - control.touchData.offset.left;
+		control.touchData.y = event.targetTouches[0].pageY - control.touchData.offset.top;
 
-		if(CONTROL_SIGNAL.data.x >= 0 && CONTROL_SIGNAL.data.x <= CONTROL_SIGNAL.data.x_measure)
+		if(control.touchData.x >= 0 && control.touchData.x <= control.touchData.x_measure)
 		{
-			CONTROL_SIGNAL.data.x_percent = Math.round((CONTROL_SIGNAL.data.x / CONTROL_SIGNAL.data.x_measure) * 100);
+			control.touchData.x_percent = Math.round((control.touchData.x / control.touchData.x_measure) * 100);
 		}
 
-		if(CONTROL_SIGNAL.data.y >= 0 && CONTROL_SIGNAL.data.y <= CONTROL_SIGNAL.data.y_measure)
+		if(control.touchData.y >= 0 && control.touchData.y <= control.touchData.y_measure)
 		{
-			CONTROL_SIGNAL.data.y_percent = Math.round((CONTROL_SIGNAL.data.y / CONTROL_SIGNAL.data.y_measure) * 100);
+			control.touchData.y_percent = Math.round((control.touchData.y / control.touchData.y_measure) * 100);
 		}
 
-		touchControlSignal();
+		touch_controlSignal();
 	}
 
 	if(event.type === "touchend")
 	{
-		CONTROL_SIGNAL.reset();
+		control.touch_reset();
 
-		touchFeedback();
+		touch_feedback();
 	}
 }
 
-function touchControlSignal()
+function touch_controlSignal()
 {
-	if(CONTROL_SIGNAL.data.x_percent >= 33 && CONTROL_SIGNAL.data.x_percent < 66)
+	if(control.touchData.x_percent >= 33 && control.touchData.x_percent < 66)
 	{
-		if(CONTROL_SIGNAL.data.y_percent >= 0 && CONTROL_SIGNAL.data.y_percent < 33)
+		if(control.touchData.y_percent >= 0 && control.touchData.y_percent < 33)
 		{
-			CONTROL_SIGNAL.data.moveDirection = "UP";
+			control.dir = "UP";
 		}
 	}
 
-	if(CONTROL_SIGNAL.data.x_percent >= 33 && CONTROL_SIGNAL.data.x_percent < 66)
+	if(control.touchData.x_percent >= 33 && control.touchData.x_percent < 66)
 	{
-		if(CONTROL_SIGNAL.data.y_percent >= 66 && CONTROL_SIGNAL.data.y_percent <= 100)
+		if(control.touchData.y_percent >= 66 && control.touchData.y_percent <= 100)
 		{
-			CONTROL_SIGNAL.data.moveDirection = "DOWN";
+			control.dir = "DOWN";
 		}
 	}
 
-	if(CONTROL_SIGNAL.data.x_percent >= 0 && CONTROL_SIGNAL.data.x_percent < 33)
+	if(control.touchData.x_percent >= 0 && control.touchData.x_percent < 33)
 	{
-		if(CONTROL_SIGNAL.data.y_percent >= 33 && CONTROL_SIGNAL.data.y_percent < 66)
+		if(control.touchData.y_percent >= 33 && control.touchData.y_percent < 66)
 		{
-			CONTROL_SIGNAL.data.moveDirection = "LEFT";
+			control.dir = "LEFT";
 		}
 	}
 
-	if(CONTROL_SIGNAL.data.x_percent >= 66 && CONTROL_SIGNAL.data.x_percent <= 100)
+	if(control.touchData.x_percent >= 66 && control.touchData.x_percent <= 100)
 	{
-		if(CONTROL_SIGNAL.data.y_percent >= 33 && CONTROL_SIGNAL.data.y_percent < 66)
+		if(control.touchData.y_percent >= 33 && control.touchData.y_percent < 66)
 		{
-			CONTROL_SIGNAL.data.moveDirection = "RIGHT";
+			control.dir = "RIGHT";
 		}
 	}
 
-	touchFeedback();
+	touch_feedback();
 }
 
-function touchFeedback()
+function touch_feedback()
 {
-		var ind;
+	var ind;
 
-		switch(CONTROL_SIGNAL.data.moveDirection)
+	switch(control.dir)
+	{
+		case "UP":
 		{
-			case "UP":
-			{
-				ind = "touchPad-U-ind";
+			ind = "touchPad-U-ind";
 
-				break;
-			}
-
-			case "DOWN":
-			{
-				ind = "touchPad-D-ind";
-
-				break;
-			}
-
-			case "LEFT":
-			{
-				ind = "touchPad-L-ind";
-
-				break;
-			}
-
-			case "RIGHT":
-			{
-				ind = "touchPad-R-ind";
-
-				break;
-			}
+			break;
 		}
 
-		if(CONTROL_SIGNAL.data.moveDirection === "STILL")
+		case "DOWN":
 		{
-			$("#" + CONTROL_SIGNAL.data.indicator).removeClass("touchPad_C_signal_show").addClass("touchPad_C_signal_hide");
+			ind = "touchPad-D-ind";
 
-			CONTROL_SIGNAL.data.indicator = "";
+			break;
 		}
 
-
-		else
+		case "LEFT":
 		{
-			if(ind !== CONTROL_SIGNAL.data.indicator)
-			{
-				$("#" + CONTROL_SIGNAL.data.indicator).removeClass("touchPad_C_signal_show").addClass("touchPad_C_signal_hide");
+			ind = "touchPad-L-ind";
 
-				$("#" + ind).removeClass("touchPad_C_signal_hide").addClass("touchPad_C_signal_show");
-
-				CONTROL_SIGNAL.data.indicator = ind;
-			}
+			break;
 		}
 
-		if(control.dir != CONTROL_SIGNAL.data.moveDirection)
+		case "RIGHT":
 		{
-			control.dir = CONTROL_SIGNAL.data.moveDirection;
-		}
+			ind = "touchPad-R-ind";
 
-	// trace(CONTROL_SIGNAL.data.moveDirection);
+			break;
+		}
+	}
+
+	if(control.dir === "STILL")
+	{
+		$("#" + control.touchData.indicator).removeClass("touchPad_C_signal_show").addClass("touchPad_C_signal_hide");
+
+		control.touchData.indicator = "";
+	}
+
+	else
+	{
+		if(ind !== control.touchData.indicator)
+		{
+			$("#" + control.touchData.indicator).removeClass("touchPad_C_signal_show").addClass("touchPad_C_signal_hide");
+
+			$("#" + ind).removeClass("touchPad_C_signal_hide").addClass("touchPad_C_signal_show");
+
+			control.touchData.indicator = ind;
+		}
+	}
 }
