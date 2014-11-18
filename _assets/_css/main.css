@@ -84,6 +84,14 @@
 	position: absolute;
 }
 
+.layer-enemy
+{
+	width: inherit;
+	height: inherit;
+
+	position: absolute;
+}
+
 .layer-ui
 {
 	width: inherit;
@@ -218,6 +226,25 @@
 }
 
 /* ----------------------------- TEMP PORTAL */
+
+
+/* ----------------------------- ENEMY */
+
+.enemy
+{
+	width: 40px;
+	height: 40px;
+
+	position: absolute;
+}
+
+#enemy_0
+{
+	-webkit-transform : translate(0px, 120px);
+	transform 				: translate(0px, 120px);
+}
+
+/* ----------------------------- ENEMY */
 
 
 @media screen and (min-width:600px)

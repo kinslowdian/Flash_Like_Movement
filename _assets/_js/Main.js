@@ -1,5 +1,7 @@
 var trace = function(msg){ console.log(msg); };
 
+var demo = 1;
+
 var control;
 
 var loopRun;
@@ -9,7 +11,11 @@ var HIT_TEST;
 
 var portalTarget;
 
+var enemyTarget;
+
 var portalArr = new Array();
+
+var enemyArr = new Array();
 
 var Control = function()
 {
@@ -28,6 +34,9 @@ Control.prototype.init = function()
 
 	this.fl.x = 0;
 	this.fl.y = 0;
+
+	this.fl.spawn_x = 0;
+	this.fl.spawn_y = 0;
 
 	this.fl.move = 2;
 	this.fl.moveX = 0;
@@ -53,6 +62,12 @@ Control.prototype.writePosition = function(placement)
 
 	this.fl.moveX 				= 0;
 	this.fl.moveY 				= 0;
+}
+
+Control.prototype.writeSpawn = function(placement)
+{
+	this.fl.spawn_x = placement.x;
+	this.fl.spawn_y = placement.y;
 }
 
 Control.prototype.touch_init = function(touchArea)
@@ -101,8 +116,24 @@ FakePortal.prototype.build = function()
 
 	this.x_mid = this.settings.x + 20;
 	this.y_mid = this.settings.y + 20;
+
+	delete this.settings;
 }
 
+var FakeEnemy = function(settings)
+{
+	this.settings = {};
+	this.settings = settings;
+}
+
+FakeEnemy.prototype.build = function()
+{
+	this.id	= this.settings.id;
+	this.x 	= this.settings.x;
+	this.y 	= this.settings.y;
+	this.w 	= this.settings.w;
+	this.h 	= this.settings.h;
+}
 
 $(document).ready(function(){ init(); });
 
@@ -110,6 +141,8 @@ $(document).ready(function(){ init(); });
 function init()
 {
 	var p;
+
+	var e;
 
 	control = new Control();
 	control.init();
@@ -135,12 +168,19 @@ function init()
 
 	portalArr.push(p);
 
+	e = new FakeEnemy({x:0, y:120, w:40, h:40, id:"enemy_0"});
+	e.build();
+
+	enemyArr.push(e);
+
 	onEnterFrame_init(true);
 
 	// TouchUI.js
 	touch_init();
 
 	move_init(true);
+
+	$(".status")[0].addEventListener("click", temp_return_toMap, false);
 }
 
 function onEnterFrame_init(run)
@@ -163,8 +203,12 @@ function hitTest_init()
 {
 	HIT_TEST = {};
 
+	HIT_TEST.hit_portal_id = "";
+	HIT_TEST.hit_enemy_id = "";
+
 	HIT_TEST.hit_edge = false;
 	HIT_TEST.hit_portal = false;
+	HIT_TEST.hit_enemy = false;
 }
 
 function move_init(run)
@@ -344,6 +388,15 @@ function hack_hitTest()
 
 			HIT_TEST.hit_portal_id = HIT_TEST.hits[0].id;
 		}
+
+		else if($(HIT_TEST.hits[0]).attr("data-npc") === "enemy")
+		{
+			HIT_TEST.hit_enemy = true;
+
+			control.signal = false;
+
+			HIT_TEST.hit_enemy_id = HIT_TEST.hits[0].id;
+		}
 	}
 
 	else
@@ -386,8 +439,13 @@ function hack_hitTest_update()
 	{
 		// SAFE VALUES UPDATED
 
-		control.fl.target_safe_x = control.fl.target_x;
-		control.fl.target_safe_y = control.fl.target_y;
+		if(!HIT_TEST.hit_enemy)
+		{
+			control.fl.target_safe_x = control.fl.target_x;
+			control.fl.target_safe_y = control.fl.target_y;
+		}
+		// control.fl.target_safe_x = control.fl.target_x;
+		// control.fl.target_safe_y = control.fl.target_y;
 	}
 
 	if(HIT_TEST.hit_portal)
@@ -395,6 +453,20 @@ function hack_hitTest_update()
 		onEnterFrame_init(false);
 
 		temp_findPortalEnter();
+	}
+
+	else
+	{
+
+	}
+
+	if(HIT_TEST.hit_enemy)
+	{
+		onEnterFrame_init(false);
+
+
+
+		temp_findEnemy();
 	}
 
 	else
@@ -439,7 +511,7 @@ function onEnterFrame_move()
 {
 	var css;
 
-	if(!HIT_TEST.hit_portal)
+	if(!HIT_TEST.hit_portal && !HIT_TEST.hit_enemy)
 	{
 		if(control.fl.x != control.fl.target_x)
 		{
@@ -462,7 +534,20 @@ function onEnterFrame_move()
 	}
 }
 
+function temp_findEnemy()
+{
+	for(var i in enemyArr)
+	{
+		if(HIT_TEST.hit_enemy_id === enemyArr[i].id)
+		{
+			enemyTarget = enemyArr[i];
 
+			break;
+		}
+	}
+
+	temp_autoMove_init("ENEMY_ATTACK");
+}
 
 function temp_findPortalEnter()
 {
@@ -569,6 +654,48 @@ function temp_autoMove_init(moveRequest)
 			temp_autoMove_tween(tween, true);
 
 			delete tween;
+		},
+
+		"ENEMY_ATTACK"	: function()
+		{
+			var tween = {};
+
+			tween.x 		= enemyTarget.x;
+			tween.y 		= enemyTarget.y;
+			tween.a 		= "1";
+			tween.onEnd = temp_autoMove_enemyAttack;
+
+			temp_autoMove_tween(tween, true);
+
+			delete tween;
+		},
+
+		"ENEMY_RETREAT"	: function()
+		{
+			var tween = {};
+
+			tween.x 		= control.fl.target_safe_x;
+			tween.y 		= control.fl.target_safe_y;
+
+			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
+
+			temp_autoMove_tween(tween, false);
+
+			delete tween;
+		},
+
+		"SPAWN"	: function()
+		{
+			var tween = {};
+
+			tween.x	= control.fl.spawn_x;
+			tween.y	= control.fl.spawn_y;
+
+			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
+
+			temp_autoMove_tween(tween, false);
+
+			delete tween;
 		}
 
 	};
@@ -593,11 +720,15 @@ function temp_autoMove_tween(settings, animate)
 
 	css.write = 	{
 										"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
-										"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
-										"opacity"						: css.a
+										"transform"					: "translate(" + css.x + "px, " + css.y + "px)"
 								};
 
 	$(".player").css(css.write);
+
+	if(css.a)
+	{
+		$(".player").css("opacity", css.a);
+	}
 }
 
 function temp_autoMove_event_enter(event)
@@ -617,8 +748,39 @@ function temp_autoMove_event_exit(event)
 
 	$(".player").removeClass("tween-player");
 
+	control.writeSpawn({x:control.fl.x, y:control.fl.y});
+
 	// PLUG CONTROLS
 	move_reset();
+}
+
+function temp_autoMove_enemyAttack()
+{
+	$(".player")[0].removeEventListener("webkitTransitionEnd", temp_autoMove_enemyAttack, false);
+	$(".player")[0].removeEventListener("transitionend", temp_autoMove_enemyAttack, false);
+
+	$(".player").removeClass("tween-player");
+}
+
+// HACK
+
+function temp_return_toMap(event)
+{
+	if(demo == 0)
+	{
+		temp_autoMove_init("ENEMY_RETREAT");
+
+		// PLUG CONTROLS
+		move_reset();
+	}
+
+	if(demo == 1)
+	{
+		temp_autoMove_init("SPAWN");
+
+		// PLUG CONTROLS
+		move_reset();
+	}
 }
 
 
