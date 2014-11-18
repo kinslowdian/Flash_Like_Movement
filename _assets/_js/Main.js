@@ -38,6 +38,23 @@ Control.prototype.init = function()
 	this.dir = "";
 }
 
+Control.prototype.writePosition = function(placement)
+{
+	this.dir 							= placement.d;
+
+	this.fl.x 						= placement.x;
+	this.fl.y 						= placement.y;
+
+	this.fl.target_x 			= this.fl.x;
+	this.fl.target_y 			= this.fl.y;
+
+	this.fl.target_safe_x = this.fl.x;
+	this.fl.target_safe_y = this.fl.y;
+
+	this.fl.moveX 				= 0;
+	this.fl.moveY 				= 0;
+}
+
 var FakePortal = function(settings)
 {
 	this.settings = {};
@@ -436,86 +453,73 @@ function temp_autoMove_init(moveRequest)
 
 		"PORTAL_ENTER"	: function()
 		{
-			var css = {};
+			var tween = {};
 
-			css.x = portalTarget.x_mid;
-			css.y = portalTarget.y_mid;
-			css.write = {};
+			tween.x 		= portalTarget.x_mid;
+			tween.y 		= portalTarget.y_mid;
+			tween.a 		= "0";
+			tween.onEnd = temp_autoMove_event_enter;
 
-			$(".player").addClass("tween-player");
+			temp_autoMove_tween(tween, true);
 
-			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event_enter, false);
-			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event_enter, false);
-
-			css.write = 	{
-												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
-												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
-												"opacity"						: "0"
-										};
-
-			$(".player").css(css.write);
-
-			delete css;
+			delete tween;
 		},
 
 		"PORTAL_PLACE"	: function()
 		{
-			var css = {};
+			var tween = {};
 
-			css.delay = null;
-			css.x = portalTarget.x_mid;
-			css.y = portalTarget.y_mid;
-			css.write = {};
+			var temp_delay = null;
 
-			css.write = 	{
-												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
-												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
-												"opacity"						: "0"
-										};
+			tween.x 		= portalTarget.x_mid;
+			tween.y 		= portalTarget.y_mid;
+			tween.a 		= "0";
 
-			$(".player").css(css.write);
+			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
+
+			temp_autoMove_tween(tween, false);
+
+			delete tween;
 
 			// HACKY EXIT AFTER SCREEN PLACEMENT
-			css.delay = setTimeout(temp_autoMove_init, 1000, "PORTAL_EXIT");
-
-			delete css;
+			temp_delay = setTimeout(temp_autoMove_init, 1000, "PORTAL_EXIT");
 		},
 
 		"PORTAL_EXIT"		: function()
 		{
-			var css = {};
+			var tween = {};
+			var css;
 
-			css.x 		= portalTarget.x_mid;
-			css.y	 		= portalTarget.y_mid;
-			css.pushX = 0;
-			css.pushY = 0;
-			css.write = {};
+			tween.x 				= portalTarget.x_mid;
+			tween.y 				= portalTarget.y_mid;
+			tween.a 				= "1";
+			tween.pushX 		= 0;
+			tween.pushY 		= 0;
+			tween.onEnd 		= temp_autoMove_event_exit;
 
 			switch(portalTarget.d)
 			{
-				case "UP"			:{ css.pushY = -(portalTarget.h); break; }
-				case "DOWN"		:{ css.pushY = portalTarget.h; 		break; }
-				case "LEFT"		:{ css.pushX = -(portalTarget.w); break; }
-				case "RIGHT"	:{ css.pushX = portalTarget.w; 		break; }
+				case "UP"			:{ tween.pushY = -(portalTarget.h); break; }
+				case "DOWN"		:{ tween.pushY = portalTarget.h; 		break; }
+				case "LEFT"		:{ tween.pushX = -(portalTarget.w); break; }
+				case "RIGHT"	:{ tween.pushX = portalTarget.w; 		break; }
 			}
 
-			css.x += css.pushX;
-			css.y += css.pushY;
+			tween.x += tween.pushX;
+			tween.y += tween.pushY;
 
-			$(".player").addClass("tween-player");
+			css = 	{
+								"-webkit-transform"	: "translate(" + tween.x + "px, " + tween.y + "px)",
+								"transform"					: "translate(" + tween.x + "px, " + tween.y + "px)"
+							};
 
-			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event_exit, false);
-			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event_exit, false);
+			$(".hitTest").css(css);
 
-			css.write = 	{
-												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
-												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
-												"opacity"						: "1"
-										};
+			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
 
-			$(".player").css(css.write);
+			temp_autoMove_tween(tween, true);
 
-			delete css;
+			delete tween;
 		}
 
 	};
@@ -524,6 +528,27 @@ function temp_autoMove_init(moveRequest)
 	{
 		return moveTypes[moveRequest]();
 	}
+}
+
+function temp_autoMove_tween(settings, animate)
+{
+	var css = settings;
+
+	if(animate)
+	{
+			$(".player").addClass("tween-player");
+
+			$(".tween-player")[0].addEventListener("webkitTransitionEnd", css.onEnd, false);
+			$(".tween-player")[0].addEventListener("transitionend", css.onEnd, false);
+	}
+
+	css.write = 	{
+										"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
+										"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
+										"opacity"						: css.a
+								};
+
+	$(".player").css(css.write);
 }
 
 function temp_autoMove_event_enter(event)
@@ -543,7 +568,7 @@ function temp_autoMove_event_exit(event)
 
 	$(".player").removeClass("tween-player");
 
-	// temp_findPortalExit();
+	// PLUG CONTROLS
 }
 
 
