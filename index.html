@@ -12,7 +12,9 @@
 
 <script type="text/javascript" src="_assets/_js/_libs/_jquery/jquery-2.0.3.js"></script>
 <script type="text/javascript" src="_assets/_js/_libs/_collision/jquery-collision.js"></script>
+
 <script type="text/javascript" src="_assets/_js/Main.js"></script>
+<script type="text/javascript" src="_assets/_js/TouchUI.js"></script>
 
 </head>
 
@@ -66,6 +68,35 @@
 		</div> <!-- .layer-player -->
 
 	</div> <!-- .screen -->
+
+	<div class="layer-ui">
+
+		<div id="touchPad">
+
+			<div class="touchPad_C">
+
+				<div class="touchPad-cont touchPad_C_show"> <!-- touchPad_C_hide -->
+
+					<div class="touchPad-inner">
+
+						<div id="touchPad-U-ind" class="touchPad-feedback touchPad_C_signal_hide"></div>
+						<div id="touchPad-D-ind" class="touchPad-feedback touchPad_C_signal_hide"></div>
+						<div id="touchPad-L-ind" class="touchPad-feedback touchPad_C_signal_hide"></div>
+						<div id="touchPad-R-ind" class="touchPad-feedback touchPad_C_signal_hide"></div>
+
+						<div class="touchPad-base vectors_touch-ui"></div>
+
+					</div>
+
+				</div>
+
+				<div id="touchPad-full"></div>
+
+			</div> <!-- .touchPad_C -->
+
+		</div> <!-- #touchPad -->
+
+	</div> <!-- .layer-ui -->
 
 </div> <!-- .wrapper -->
 

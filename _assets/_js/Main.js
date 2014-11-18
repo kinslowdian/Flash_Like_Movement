@@ -29,7 +29,7 @@ Control.prototype.init = function()
 	this.fl.x = 0;
 	this.fl.y = 0;
 
-	this.fl.move = 4;
+	this.fl.move = 2;
 	this.fl.moveX = 0;
 	this.fl.moveY = 0;
 
@@ -110,6 +110,9 @@ function init()
 
 	onEnterFrame_init(true);
 
+	// TouchUI.js
+	touch_init();
+
 	move_init(true);
 }
 
@@ -145,6 +148,11 @@ function move_init(run)
 
 		$(window)[0].addEventListener("keydown", move_event, false);
 		$(window)[0].addEventListener("keyup", move_event, false);
+
+		// TouchUI.js
+		$("#touchPad-full")[0].addEventListener("touchstart", touchFind, false);
+		$("#touchPad-full")[0].addEventListener("touchmove", touchFind, false);
+		$("#touchPad-full")[0].addEventListener("touchend", touchFind, false);
 	}
 
 	else
@@ -153,6 +161,11 @@ function move_init(run)
 
 		$(window)[0].removeEventListener("keydown", move_event, false);
 		$(window)[0].removeEventListener("keyup", move_event, false);
+
+		// TouchUI.js
+		$("#touchPad-full")[0].removeEventListener("touchstart", touchFind, false);
+		$("#touchPad-full")[0].removeEventListener("touchmove", touchFind, false);
+		$("#touchPad-full")[0].removeEventListener("touchend", touchFind, false);
 	}
 }
 
