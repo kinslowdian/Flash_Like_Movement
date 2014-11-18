@@ -81,7 +81,13 @@
 	position: absolute;
 }
 
-.hitTest
+.tween-player
+{
+	-webkit-transition 	: 100ms ease-in;
+	transition 					: 100ms ease-in;
+}
+
+.hitTest .debug
 {
 	background: rgba(0, 255, 0, 0.4);
 }
@@ -99,8 +105,6 @@
 .border
 {
 	position: absolute;
-
-	/*background: #fff;*/
 }
 
 .border-t
