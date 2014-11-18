@@ -53,6 +53,7 @@ FakePortal.prototype.build = function()
 	this.h 	= this.settings.h;
 	this.n	= this.settings.n;
 	this.e 	= this.settings.e;
+	this.d 	= this.settings.d;
 
 	this.x_mid = this.settings.x + 20;
 	this.y_mid = this.settings.y + 20;
@@ -64,6 +65,8 @@ $(document).ready(function(){ init(); });
 
 function init()
 {
+	var p;
+
 	control = new Control();
 	control.init();
 
@@ -78,8 +81,12 @@ function init()
 
 	loopRun = false;
 
-	var p = new FakePortal({x:240, y:440, w:80, h:80, n:0, e:1, id:"portal_0"});
+	p = new FakePortal({x:240, y:440, w:80, h:80, n:0, e:1, d:"LEFT", id:"portal_0"});
+	p.build();
 
+	portalArr.push(p);
+
+	p = new FakePortal({x:0, y:280, w:80, h:80, n:1, e:0, d:"DOWN", id:"portal_1"});
 	p.build();
 
 	portalArr.push(p);
@@ -321,7 +328,7 @@ function hack_hitTest_update()
 	{
 		onEnterFrame_init(false);
 
-		temp_findPortal();
+		temp_findPortalEnter();
 	}
 
 	else
@@ -391,7 +398,7 @@ function onEnterFrame_move()
 
 
 
-function temp_findPortal()
+function temp_findPortalEnter()
 {
 	for(var i in portalArr)
 	{
@@ -404,6 +411,23 @@ function temp_findPortal()
 	}
 
 	temp_autoMove_init("PORTAL_ENTER");
+}
+
+function temp_findPortalExit()
+{
+	trace("??");
+
+	for(var i in portalArr)
+	{
+		if(portalTarget.e == portalArr[i].n)
+		{
+			portalTarget = portalArr[i];
+
+			break;
+		}
+	}
+
+	temp_autoMove_init("PORTAL_PLACE");
 }
 
 function temp_autoMove_init(moveRequest)
@@ -420,8 +444,8 @@ function temp_autoMove_init(moveRequest)
 
 			$(".player").addClass("tween-player");
 
-			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event, false);
-			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event, false);
+			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event_enter, false);
+			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event_enter, false);
 
 			css.write = 	{
 												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
@@ -430,11 +454,68 @@ function temp_autoMove_init(moveRequest)
 										};
 
 			$(".player").css(css.write);
+
+			delete css;
+		},
+
+		"PORTAL_PLACE"	: function()
+		{
+			var css = {};
+
+			css.delay = null;
+			css.x = portalTarget.x_mid;
+			css.y = portalTarget.y_mid;
+			css.write = {};
+
+			css.write = 	{
+												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
+												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
+												"opacity"						: "0"
+										};
+
+			$(".player").css(css.write);
+
+			// HACKY EXIT AFTER SCREEN PLACEMENT
+			css.delay = setTimeout(temp_autoMove_init, 1000, "PORTAL_EXIT");
+
+			delete css;
 		},
 
 		"PORTAL_EXIT"		: function()
 		{
+			var css = {};
 
+			css.x 		= portalTarget.x_mid;
+			css.y	 		= portalTarget.y_mid;
+			css.pushX = 0;
+			css.pushY = 0;
+			css.write = {};
+
+			switch(portalTarget.d)
+			{
+				case "UP"			:{ css.pushY = -(portalTarget.h); break; }
+				case "DOWN"		:{ css.pushY = portalTarget.h; 		break; }
+				case "LEFT"		:{ css.pushX = -(portalTarget.w); break; }
+				case "RIGHT"	:{ css.pushX = portalTarget.w; 		break; }
+			}
+
+			css.x += css.pushX;
+			css.y += css.pushY;
+
+			$(".player").addClass("tween-player");
+
+			$(".tween-player")[0].addEventListener("webkitTransitionEnd", temp_autoMove_event_exit, false);
+			$(".tween-player")[0].addEventListener("transitionend", temp_autoMove_event_exit, false);
+
+			css.write = 	{
+												"-webkit-transform"	: "translate(" + css.x + "px, " + css.y + "px)",
+												"transform"					: "translate(" + css.x + "px, " + css.y + "px)",
+												"opacity"						: "1"
+										};
+
+			$(".player").css(css.write);
+
+			delete css;
 		}
 
 	};
@@ -445,12 +526,24 @@ function temp_autoMove_init(moveRequest)
 	}
 }
 
-function temp_autoMove_event(event)
+function temp_autoMove_event_enter(event)
 {
-	$(".player")[0].removeEventListener("webkitTransitionEnd", temp_autoMove_event, false);
-	$(".player")[0].removeEventListener("transitionend", temp_autoMove_event, false);
+	$(".player")[0].removeEventListener("webkitTransitionEnd", temp_autoMove_event_enter, false);
+	$(".player")[0].removeEventListener("transitionend", temp_autoMove_event_enter, false);
 
 	$(".player").removeClass("tween-player");
+
+	temp_findPortalExit();
+}
+
+function temp_autoMove_event_exit(event)
+{
+	$(".player")[0].removeEventListener("webkitTransitionEnd", temp_autoMove_event_exit, false);
+	$(".player")[0].removeEventListener("transitionend", temp_autoMove_event_exit, false);
+
+	$(".player").removeClass("tween-player");
+
+	// temp_findPortalExit();
 }
 
 
