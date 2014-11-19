@@ -14,6 +14,8 @@ Display.prototype.init = function()
 	this.h = window.innerHeight;
 
 	this.focus_y = 0;
+	this.focusCurrent_y = 0;
+	this.focusAllow = false;
 }
 
 Display.prototype.updateScreenVals = function()
@@ -25,7 +27,7 @@ Display.prototype.updateScreenVals = function()
 Display.prototype.centerPlayer = function()
 {
 	// 	center_y = -(player_y) + ((screen_h * 0.5) - (player_h * 0.5));
-	this.focus_y = -(control.fl.target_safe_y) + ((this.h * 0.5) - (40 * 0.5));
+	this.focus_y = Math.round(-(control.fl.target_safe_y) + ((this.h * 0.5) - (40 * 0.5)));
 }
 
 function display_init()
@@ -34,6 +36,29 @@ function display_init()
 	display.init();
 
 	display_screenUpdate(true);
+
+	display_scrollInit(true);
+
+
+}
+
+function display_scrollInit(run)
+{
+	if(run)
+	{
+		display.focusAllow = true;
+
+		$(".screen")[0].addEventListener("webkitTransitionEnd", display_centerLevelEvent, false);
+		$(".screen")[0].addEventListener("transitionend", display_centerLevelEvent, false);
+	}
+
+	else
+	{
+		display.focusAllow = false;
+
+		$(".screen")[0].removeEventListener("webkitTransitionEnd", display_centerLevelEvent, false);
+		$(".screen")[0].removeEventListener("transitionend", display_centerLevelEvent, false);
+	}
 }
 
 function display_screenUpdate(run)
@@ -61,10 +86,19 @@ function display_centerLevel()
 
 	display.centerPlayer();
 
-	css = {
-					"-webkit-transform" : "translateY(" + Math.round(display.focus_y) + "px)",
-					"transform" 				: "translateY(" + Math.round(display.focus_y) + "px)"
-				};
+	if(display.focusCurrent_y != display.focus_y && display.focusAllow)
+	{
 
-	$(".screen").css(css);
+		css = {
+						"-webkit-transform" : "translateY(" + display.focus_y + "px)",
+						"transform" 				: "translateY(" + display.focus_y + "px)"
+					};
+
+		$(".screen").css(css);
+	}
+}
+
+function display_centerLevelEvent(event)
+{
+	display.focusCurrent_y = display.focus_y;
 }

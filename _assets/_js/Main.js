@@ -617,12 +617,16 @@ function temp_autoMove_init(moveRequest)
 
 			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
 
+			display_centerLevel();
+
 			temp_autoMove_tween(tween, false);
 
 			delete tween;
 
 			// HACKY EXIT AFTER SCREEN PLACEMENT
-			temp_delay = setTimeout(temp_autoMove_init, 1000, "PORTAL_EXIT");
+
+			temp_delay = setTimeout(temp_autoMove_init, 600, "PORTAL_EXIT");
+
 		},
 
 		"PORTAL_EXIT"		: function()
