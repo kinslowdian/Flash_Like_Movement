@@ -38,7 +38,7 @@ Control.prototype.init = function()
 	this.fl.spawn_x = 0;
 	this.fl.spawn_y = 0;
 
-	this.fl.move = 2;
+	this.fl.move = 4;
 	this.fl.moveX = 0;
 	this.fl.moveY = 0;
 
@@ -62,12 +62,21 @@ Control.prototype.writePosition = function(placement)
 
 	this.fl.moveX 				= 0;
 	this.fl.moveY 				= 0;
+
+	this.walkClass				= "tween-player-XX";
 }
 
 Control.prototype.writeSpawn = function(placement)
 {
 	this.fl.spawn_x = placement.x;
 	this.fl.spawn_y = placement.y;
+}
+
+Control.prototype.walkClassUpdate = function(newClass)
+{
+	$(".player .player-sprite").removeClass(this.walkClass).addClass(newClass);
+
+	this.walkClass = newClass;
 }
 
 Control.prototype.touch_init = function(touchArea)
@@ -253,6 +262,8 @@ function move_event(event)
 	if(event.type === "keyup")
 	{
 		control.dir = "STILL";
+
+		control.walkClassUpdate("tween-player-XX");
 	}
 
 	if(event.type === "keydown")
@@ -264,6 +275,8 @@ function move_event(event)
 				// LEFT
 				tempSignal = "LEFT";
 
+				control.walkClassUpdate("tween-player-LR");
+
 				break;
 			}
 
@@ -271,6 +284,8 @@ function move_event(event)
 			{
 				// UP
 				tempSignal = "UP";
+
+				control.walkClassUpdate("tween-player-UD");
 
 				break;
 			}
@@ -280,6 +295,8 @@ function move_event(event)
 				// RIGHT
 				tempSignal = "RIGHT";
 
+				control.walkClassUpdate("tween-player-LR");
+
 				break;
 			}
 
@@ -288,12 +305,16 @@ function move_event(event)
 				// DOWN
 				tempSignal = "DOWN";
 
+				control.walkClassUpdate("tween-player-UD");
+
 				break;
 			}
 
 			default:
 			{
 				tempSignal = "STILL";
+
+				control.walkClassUpdate("tween-player-XX");
 			}
 		}
 
@@ -339,7 +360,7 @@ function onEnterFrame_direction()
 			}
 		}
 
-		if(control.dir === "DOWN") //else if
+		else if(control.dir === "DOWN") //else if
 		{
 			if(control.fl.y == control.fl.target_y)
 			{
@@ -357,7 +378,7 @@ function onEnterFrame_direction()
 			}
 		}
 
-		if(control.dir === "RIGHT") //else if
+		else if(control.dir === "RIGHT") //else if
 		{
 			if(control.fl.x == control.fl.target_x)
 			{
@@ -589,16 +610,22 @@ function temp_findPortalExit()
 
 function temp_autoMove_init(moveRequest)
 {
+	var tween;
+	var css;
+	var temp_delay;
+
 	var moveTypes = {
 
 		"PORTAL_ENTER"	: function()
 		{
-			var tween = {};
+			tween = {};
 
 			tween.x 		= portalTarget.x_mid;
 			tween.y 		= portalTarget.y_mid;
 			tween.a 		= "0";
 			tween.onEnd = temp_autoMove_event_enter;
+
+			control.walkClassUpdate("tween-player-XX");
 
 			temp_autoMove_tween(tween, true);
 
@@ -607,9 +634,7 @@ function temp_autoMove_init(moveRequest)
 
 		"PORTAL_PLACE"	: function()
 		{
-			var tween = {};
-
-			var temp_delay = null;
+			tween = {};
 
 			tween.x 		= portalTarget.x_mid;
 			tween.y 		= portalTarget.y_mid;
@@ -631,8 +656,8 @@ function temp_autoMove_init(moveRequest)
 
 		"PORTAL_EXIT"		: function()
 		{
-			var tween = {};
-			var css;
+			tween = {};
+			css;
 
 			// tween.x 				= portalTarget.x_mid;
 			// tween.y 				= portalTarget.y_mid;
@@ -670,12 +695,14 @@ function temp_autoMove_init(moveRequest)
 
 		"ENEMY_ATTACK"	: function()
 		{
-			var tween = {};
+			tween = {};
 
 			tween.x 		= enemyTarget.x;
 			tween.y 		= enemyTarget.y;
 			tween.a 		= "1";
 			tween.onEnd = temp_autoMove_enemyAttack;
+
+			control.walkClassUpdate("tween-player-XX");
 
 			temp_autoMove_tween(tween, true);
 
@@ -684,7 +711,7 @@ function temp_autoMove_init(moveRequest)
 
 		"ENEMY_RETREAT"	: function()
 		{
-			var tween = {};
+			tween = {};
 
 			tween.x 		= control.fl.target_safe_x;
 			tween.y 		= control.fl.target_safe_y;
@@ -698,14 +725,23 @@ function temp_autoMove_init(moveRequest)
 
 		"SPAWN"	: function()
 		{
-			var tween = {};
+			tween = {};
 
 			tween.x	= control.fl.spawn_x;
 			tween.y	= control.fl.spawn_y;
 
 			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
 
+			control.walkClassUpdate("tween-player-XX");
+
 			temp_autoMove_tween(tween, false);
+
+			delete tween;
+		},
+
+		"SPAWN_MOVE"	: function()
+		{
+			tween = {};
 
 			delete tween;
 		}

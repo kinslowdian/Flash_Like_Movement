@@ -79,11 +79,14 @@ function touch_feedback()
 {
 	var ind;
 
+	var walkClass;
+
 	switch(control.dir)
 	{
 		case "UP":
 		{
 			ind = "touchPad-U-ind";
+			walkClass = "tween-player-UD";
 
 			break;
 		}
@@ -91,6 +94,7 @@ function touch_feedback()
 		case "DOWN":
 		{
 			ind = "touchPad-D-ind";
+			walkClass = "tween-player-UD";
 
 			break;
 		}
@@ -98,6 +102,7 @@ function touch_feedback()
 		case "LEFT":
 		{
 			ind = "touchPad-L-ind";
+			walkClass = "tween-player-LR";
 
 			break;
 		}
@@ -105,6 +110,7 @@ function touch_feedback()
 		case "RIGHT":
 		{
 			ind = "touchPad-R-ind";
+			walkClass = "tween-player-LR";
 
 			break;
 		}
@@ -115,6 +121,8 @@ function touch_feedback()
 		$("#" + control.touchData.indicator).removeClass("touchPad_C_signal_show").addClass("touchPad_C_signal_hide");
 
 		control.touchData.indicator = "";
+
+		control.walkClassUpdate("tween-player-XX");
 	}
 
 	else
@@ -126,6 +134,8 @@ function touch_feedback()
 			$("#" + ind).removeClass("touchPad_C_signal_hide").addClass("touchPad_C_signal_show");
 
 			control.touchData.indicator = ind;
+
+			control.walkClassUpdate(walkClass);
 		}
 	}
 }
