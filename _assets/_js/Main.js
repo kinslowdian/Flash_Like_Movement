@@ -30,7 +30,7 @@ Control.prototype.init = function()
 	this.fl.target_safe_x = 0;
 	this.fl.target_safe_y = 0;
 
-	this.fl.target_move = 20;
+	this.fl.target_move = 40;
 
 	this.fl.x = 0;
 	this.fl.y = 0;
@@ -624,8 +624,10 @@ function temp_autoMove_init(moveRequest)
 			var tween = {};
 			var css;
 
-			tween.x 				= portalTarget.x_mid;
-			tween.y 				= portalTarget.y_mid;
+			// tween.x 				= portalTarget.x_mid;
+			// tween.y 				= portalTarget.y_mid;
+			tween.x 				= portalTarget.x;
+			tween.y 				= portalTarget.y;
 			tween.a 				= "1";
 			tween.pushX 		= 0;
 			tween.pushY 		= 0;
@@ -634,9 +636,9 @@ function temp_autoMove_init(moveRequest)
 			switch(portalTarget.d)
 			{
 				case "UP"			:{ tween.pushY = -(portalTarget.h); break; }
-				case "DOWN"		:{ tween.pushY = portalTarget.h; 		break; }
+				case "DOWN"		:{ tween.pushY = portalTarget.h * 1.5; 		break; }
 				case "LEFT"		:{ tween.pushX = -(portalTarget.w); break; }
-				case "RIGHT"	:{ tween.pushX = portalTarget.w; 		break; }
+				case "RIGHT"	:{ tween.pushX = portalTarget.w * 1.5; 		break; }
 			}
 
 			tween.x += tween.pushX;
@@ -709,6 +711,8 @@ function temp_autoMove_init(moveRequest)
 function temp_autoMove_tween(settings, animate)
 {
 	var css = settings;
+
+	trace(settings);
 
 	if(animate)
 	{
