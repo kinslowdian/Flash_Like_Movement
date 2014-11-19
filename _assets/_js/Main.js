@@ -144,6 +144,8 @@ function init()
 
 	var e;
 
+	display_init();
+
 	control = new Control();
 	control.init();
 
@@ -160,12 +162,14 @@ function init()
 
 	p = new FakePortal({x:240, y:440, w:80, h:80, n:0, e:1, d:"LEFT", id:"portal_0"});
 	p.build();
-
 	portalArr.push(p);
 
-	p = new FakePortal({x:0, y:280, w:80, h:80, n:1, e:0, d:"DOWN", id:"portal_1"});
+	p = new FakePortal({x:0, y:280, w:80, h:80, n:1, e:2, d:"DOWN", id:"portal_1"});
 	p.build();
+	portalArr.push(p);
 
+	p = new FakePortal({x:0, y:680, w:80, h:80, n:2, e:1, d:"UP", id:"portal_2"});
+	p.build();
 	portalArr.push(p);
 
 	e = new FakeEnemy({x:0, y:120, w:40, h:40, id:"enemy_0"});
@@ -181,6 +185,8 @@ function init()
 	move_init(true);
 
 	$(".status")[0].addEventListener("click", temp_return_toMap, false);
+
+	display_centerLevel();
 }
 
 function onEnterFrame_init(run)
@@ -443,6 +449,8 @@ function hack_hitTest_update()
 		{
 			control.fl.target_safe_x = control.fl.target_x;
 			control.fl.target_safe_y = control.fl.target_y;
+
+			display_centerLevel();
 		}
 		// control.fl.target_safe_x = control.fl.target_x;
 		// control.fl.target_safe_y = control.fl.target_y;
@@ -566,8 +574,6 @@ function temp_findPortalEnter()
 
 function temp_findPortalExit()
 {
-	trace("??");
-
 	for(var i in portalArr)
 	{
 		if(portalTarget.e == portalArr[i].n)
@@ -711,8 +717,6 @@ function temp_autoMove_init(moveRequest)
 function temp_autoMove_tween(settings, animate)
 {
 	var css = settings;
-
-	trace(settings);
 
 	if(animate)
 	{

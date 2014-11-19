@@ -66,6 +66,13 @@
 	margin: 0 auto;
 }
 
+.tween-screen
+{
+	-webkit-transition: 600ms linear;
+	transition: 600ms linear;
+}
+
+
 /* ----------------------------- LAYERS */
 
 .layer-player
@@ -227,6 +234,12 @@
 {
 	-webkit-transform : translate(0px, 280px);
 	transform 				: translate(0px, 280px);
+}
+
+#portal_2
+{
+	-webkit-transform : translate(0px, 680px);
+	transform 				: translate(0px, 680px);
 }
 
 /* ----------------------------- TEMP PORTAL */
