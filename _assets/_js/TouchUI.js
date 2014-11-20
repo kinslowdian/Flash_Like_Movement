@@ -1,6 +1,11 @@
 function touch_init()
 {
-	control.touch_init("touchPad-full");
+	control.touch_initPad("touchPad-full");
+}
+
+function touch_lock(event)
+{
+	event.preventDefault();
 }
 
 function touch_find(event)

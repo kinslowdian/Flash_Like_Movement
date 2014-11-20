@@ -20,28 +20,27 @@
 
 </head>
 
-<body>
+<body onorientationchange="display_rotate(event);">
 
 <div class="wrapper">
 
 	<div class="screen field-floor-ice tween-screen tweenFlickerFixManual">
 
-		<div class="layer-fill">
+		<div class="layer-fill tweenFlickerFixManualAll">
 
-			<div class="bgFill-top pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
-			<div class="bgFill-btm pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+			<div class="bgFill-l pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+			<div class="bgFill-r pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+
+			<div class="bgFill-t pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+			<div class="bgFill-b pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
 
 		</div>
 
 		<div class="layer-border">
 
-			<div class="border-t border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
-			<div class="border-b border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
-			<div class="border-l border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
-			<div class="border-r border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
-
 			<div class="border-m0 border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
 			<div class="border-m1 border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
+			<div class="border-m2 border collideCheck-field pixels_forestMassIce" data-npc="edge"></div>
 
 		</div> <!-- .layer-border -->
 

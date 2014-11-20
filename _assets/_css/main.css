@@ -221,45 +221,12 @@
 	position: absolute;
 }
 
-.border-t
-{
-	width: inherit;
-	height: 40px;
-
-	left: 0; top: -40px;
-}
-
-.border-b
-{
-	width: inherit;
-	height: 40px;
-
-	left: 0; top: 520px;
-}
-
-.border-l
-{
-	width: 40px;
-	height: inherit;
-
-	left: -40px; top: 0px;
-}
-
-.border-r
-{
-	width: 40px;
-	height: inherit;
-
-	left: 320px; top: 0px;
-}
-
 .border-m0
 {
 	width: 160px;
 	height: 120px;
 
 	left: 0;
-	/*left: 100px;*/
 	top: 160px;
 }
 
@@ -269,14 +236,26 @@
 	height: 120px;
 
 	left: 200px;
-	/*left: 100px;*/
 	top: 160px;
+}
+
+.border-m2
+{
+	width: 320px;
+	height: 160px;
+
+	left: 0px;
+	top: 520px;
 }
 
 /* ----------------------------- WALLS */
 
+.bgFill-l, .bgFill-r
+{
+	position: absolute;
+}
 
-.bgFill-top
+.bgFill-t, .bgFill-b
 {
 	width: inherit;
 
@@ -310,8 +289,8 @@
 
 #portal_2
 {
-	-webkit-transform : translate(0px, 680px);
-	transform 				: translate(0px, 680px);
+	-webkit-transform : translate(120px, 760px);
+	transform 				: translate(120px, 760px);
 }
 
 /* ----------------------------- TEMP PORTAL */

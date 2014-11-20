@@ -79,7 +79,7 @@ Control.prototype.walkClassUpdate = function(newClass)
 	this.walkClass = newClass;
 }
 
-Control.prototype.touch_init = function(touchArea)
+Control.prototype.touch_initPad = function(touchArea)
 {
 	this.touchArea = touchArea;
 	this.firstTouch = true;
@@ -177,7 +177,7 @@ function init()
 	p.build();
 	portalArr.push(p);
 
-	p = new FakePortal({x:0, y:680, w:80, h:80, n:2, e:1, d:"UP", id:"portal_2"});
+	p = new FakePortal({x:120, y:760, w:80, h:80, n:2, e:1, d:"UP", id:"portal_2"});
 	p.build();
 	portalArr.push(p);
 
@@ -194,6 +194,7 @@ function init()
 	move_init(true);
 
 	$(".status")[0].addEventListener("click", temp_return_toMap, false);
+	$(".status")[0].addEventListener("touchend", temp_return_toMap, false);
 
 	display_centerLevel();
 
@@ -202,24 +203,41 @@ function init()
 
 function setBG()
 {
-	var cssTop;
-	var cssBtm;
-	var fill = Math.round((display.screen_h * 0.5) / 40) * 40;
+	var css = {};
+	var fill_x = Math.round((display.screen_w * 0.5) / 40) * 40;
+	var fill_y = Math.round((display.screen_h * 0.5) / 40) * 40;
 
-	cssTop	= {
-							"height"						: fill + "px",
-							"-webkit-transform" : "translateY(" + -fill + "px)",
-							"transform" 				: "translateY(" + -fill + "px)"
-						};
+	css.l	= {
+						"width"							: fill_x + "px",
+						"height"						: (display.gameHeight + (fill_y * 2)) + "px",
+						"-webkit-transform" : "translate(" + -fill_x + "px, " + -fill_y + "px)",
+						"transform" 				: "translate(" + -fill_x + "px, " + -fill_y + "px)"
+					};
 
-	cssBtm	= {
-							"height"						: fill + "px",
-							"-webkit-transform" : "translateY(" + display.gameHeight + "px)",
-							"transform" 				: "translateY(" + display.gameHeight + "px)"
-						};
+	css.r	= {
+						"width"							: fill_x + "px",
+						"height"						: (display.gameHeight + (fill_y * 2)) + "px",
+						"-webkit-transform" : "translate(" + display.gameWidth + "px, " + -fill_y + "px)",
+						"transform" 				: "translate(" + display.gameWidth + "px, " + -fill_y + "px)"
+					};
 
-	$(".bgFill-top").css(cssTop);
-	$(".bgFill-btm").css(cssBtm);
+	css.t	= {
+						"height"						: fill_y + "px",
+						"-webkit-transform" : "translateY(" + -fill_y + "px)",
+						"transform" 				: "translateY(" + -fill_y + "px)"
+					};
+
+	css.b	= {
+						"height"						: fill_y + "px",
+						"-webkit-transform" : "translateY(" + display.gameHeight + "px)",
+						"transform" 				: "translateY(" + display.gameHeight + "px)"
+					};
+
+	$(".bgFill-l").css(css.l);
+	$(".bgFill-r").css(css.r);
+
+	$(".bgFill-t").css(css.t);
+	$(".bgFill-b").css(css.b);
 }
 
 function onEnterFrame_init(run)
@@ -260,6 +278,8 @@ function move_init(run)
 		$(window)[0].addEventListener("keyup", move_event, false);
 
 		// TouchUI.js
+		$(window)[0].addEventListener("touchstart", touch_lock, false);
+
 		$("#touchPad-full")[0].addEventListener("touchstart", touch_find, false);
 		$("#touchPad-full")[0].addEventListener("touchmove", touch_find, false);
 		$("#touchPad-full")[0].addEventListener("touchend", touch_find, false);
@@ -273,6 +293,8 @@ function move_init(run)
 		$(window)[0].removeEventListener("keyup", move_event, false);
 
 		// TouchUI.js
+		$(window)[0].removeEventListener("touchstart", touch_lock, false);
+
 		$("#touchPad-full")[0].removeEventListener("touchstart", touch_find, false);
 		$("#touchPad-full")[0].removeEventListener("touchmove", touch_find, false);
 		$("#touchPad-full")[0].removeEventListener("touchend", touch_find, false);

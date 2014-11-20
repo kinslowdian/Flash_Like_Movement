@@ -1,7 +1,8 @@
 var display;
 
-var Display = function(h)
+var Display = function(w, h)
 {
+	this.gameWidth = w;
 	this.gameHeight = h;
 }
 
@@ -32,14 +33,25 @@ Display.prototype.centerPlayer = function()
 
 function display_init()
 {
-	display = new Display(2000);
+	display = new Display(320, 2000);
 	display.init();
 
 	display_screenUpdate(true);
 
 	display_scrollInit(true);
+}
 
+function display_rotate(event)
+{
+	if(event != null || event != undefined)
+	{
+		if(control != null)
+		{
+			control.touch_setOffset();
+		}
+	}
 
+	trace(event);
 }
 
 function display_scrollInit(run)
