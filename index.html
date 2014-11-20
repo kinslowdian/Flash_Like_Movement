@@ -24,7 +24,14 @@
 
 <div class="wrapper">
 
-	<div class="screen field-floor-ice tween-screen">
+	<div class="screen field-floor-ice tween-screen tweenFlickerFixManual">
+
+		<div class="layer-fill">
+
+			<div class="bgFill-top pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+			<div class="bgFill-btm pixels_forestMassIce collideCheck-field" data-npc="edge"></div>
+
+		</div>
 
 		<div class="layer-border">
 
@@ -73,7 +80,7 @@
 
 			<div class="hitTest collideCheck-player"></div>
 
-			<div class="player">
+			<div class="player tweenFlickerFixManualAll">
 
 				<div class="player-sprite tween-player-XX">
 

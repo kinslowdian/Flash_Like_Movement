@@ -196,6 +196,30 @@ function init()
 	$(".status")[0].addEventListener("click", temp_return_toMap, false);
 
 	display_centerLevel();
+
+	setBG();
+}
+
+function setBG()
+{
+	var cssTop;
+	var cssBtm;
+	var fill = Math.round((display.screen_h * 0.5) / 40) * 40;
+
+	cssTop	= {
+							"height"						: fill + "px",
+							"-webkit-transform" : "translateY(" + -fill + "px)",
+							"transform" 				: "translateY(" + -fill + "px)"
+						};
+
+	cssBtm	= {
+							"height"						: fill + "px",
+							"-webkit-transform" : "translateY(" + display.gameHeight + "px)",
+							"transform" 				: "translateY(" + display.gameHeight + "px)"
+						};
+
+	$(".bgFill-top").css(cssTop);
+	$(".bgFill-btm").css(cssBtm);
 }
 
 function onEnterFrame_init(run)

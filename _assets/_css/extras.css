@@ -1,5 +1,30 @@
 @charset "UTF-8";
 
+
+	.tweenFlickerFixManual
+	{
+		-webkit-backface-visibility	: hidden;
+		backface-visibility			: hidden;
+
+		/*ADDED NOV 2014*/
+		-webkit-transform-style: preserve-3d;
+		transform-style: preserve-3d;
+	}
+
+	/*ADDED NOV 2014 HARD FORCE FIX*/
+	.tweenFlickerFixManualAll, .tweenFlickerFixManualAll *
+	{
+		-webkit-backface-visibility	: hidden;
+		backface-visibility			: hidden;
+
+		-webkit-transform-style: preserve-3d;
+		transform-style: preserve-3d;
+
+	}
+
+
+
+
 .pixels_forestMassIce
 {
 	background-image: url(../_img/tile_pineTreesMass_ice_1x.png);
@@ -80,6 +105,9 @@
 	{
 		width: inherit;
 		height: inherit;
+
+		-webkit-transform-origin: 50% 50%;
+		transform-origin: 50% 50%;
 	}
 
 	.player-sprite .map-goat-head

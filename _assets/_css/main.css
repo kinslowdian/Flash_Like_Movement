@@ -107,6 +107,14 @@
 	position: absolute;
 }
 
+.layer-fill
+{
+	width: inherit;
+	height: inherit;
+
+	position: absolute;
+}
+
 /* ----------------------------- LAYERS */
 
 
@@ -157,20 +165,20 @@
 
 @-webkit-keyframes tweenPlayerUDFrames
 {
-	0%		{-webkit-transform: translateX(0px);}
-	25%		{-webkit-transform: translateX(-4px);}
-	50%		{-webkit-transform: translateX(0px);}
-	75%		{-webkit-transform: translateX(4px);}
-	100%	{-webkit-transform: translateX(0px);}
+	0%		{-webkit-transform: translateX(0px) rotate(0deg);}
+	25%		{-webkit-transform: translateX(-4px) rotate(10deg);}
+	50%		{-webkit-transform: translateX(0px) rotate(0deg);}
+	75%		{-webkit-transform: translateX(4px) rotate(-10deg);}
+	100%	{-webkit-transform: translateX(0px) rotate(0deg);}
 }
 
 @keyframes tweenPlayerUDFrames
 {
-	0%		{transform: translateX(0px);}
-	25%		{transform: translateX(-4px);}
-	50%		{transform: translateX(0px);}
-	75%		{transform: translateX(4px);}
-	100%	{transform: translateX(0px);}
+	0%		{transform: translateX(0px) rotate(0deg);}
+	25%		{transform: translateX(-4px) rotate(10deg);}
+	50%		{transform: translateX(0px) rotate(0deg);}
+	75%		{transform: translateX(4px) rotate(-10deg);}
+	100%	{transform: translateX(0px) rotate(0deg);}
 }
 
 @-webkit-keyframes tweenPlayerLRFrames
@@ -266,6 +274,14 @@
 }
 
 /* ----------------------------- WALLS */
+
+
+.bgFill-top
+{
+	width: inherit;
+
+	position: absolute;
+}
 
 
 /* ----------------------------- TEMP PORTAL */
