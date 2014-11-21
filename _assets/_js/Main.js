@@ -166,6 +166,7 @@ function init()
 	loopList.push(onEnterFrame_stepper);
 	loopList.push(hack_hitTest);
 	loopList.push(onEnterFrame_move);
+	loopList.push(display_centerLevel);
 
 	loopRun = false;
 
@@ -196,7 +197,7 @@ function init()
 	$(".status")[0].addEventListener("click", temp_return_toMap, false);
 	$(".status")[0].addEventListener("touchend", temp_return_toMap, false);
 
-	display_centerLevel();
+	// display_centerLevel();
 
 	setBG();
 }
@@ -517,7 +518,7 @@ function hack_hitTest_update()
 			control.fl.target_safe_x = control.fl.target_x;
 			control.fl.target_safe_y = control.fl.target_y;
 
-			display_centerLevel();
+			// display_centerLevel();
 		}
 		// control.fl.target_safe_x = control.fl.target_x;
 		// control.fl.target_safe_y = control.fl.target_y;
@@ -688,7 +689,7 @@ function temp_autoMove_init(moveRequest)
 
 			control.writePosition({x:tween.x, y:tween.y, d:"STILL"});
 
-			display_centerLevel();
+			// display_centerLevel();
 
 			temp_autoMove_tween(tween, false);
 

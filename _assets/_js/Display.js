@@ -31,10 +31,18 @@ Display.prototype.centerPlayer = function()
 	this.focus_y = Math.round(-(control.fl.target_safe_y) + ((this.h * 0.5) - (40 * 0.5)));
 }
 
+Display.prototype.hack = function()
+{
+	this.stageY_move = 0.1;
+	this.stageY = 0;
+}
+
 function display_init()
 {
 	display = new Display(320, 2000);
 	display.init();
+
+	display.hack();
 
 	display_screenUpdate(true);
 
@@ -100,13 +108,36 @@ function display_centerLevel()
 
 	if(display.focusCurrent_y != display.focus_y && display.focusAllow)
 	{
+		// if(display.focus_y > display.stageY)
+		// {
+		// 	display.stageY += display.stageY_move;
+		// }
+
+		display.focus_y > display.stageY ? display.stageY += display.stageY_move : display.stageY -= display.stageY_move;
+
+
+
+		trace(display.focus_y)
+
+		// css = {
+		// 				"-webkit-transform" : "translateY(" + display.focus_y + "px)",
+		// 				"transform" 				: "translateY(" + display.focus_y + "px)"
+		// 			};
 
 		css = {
-						"-webkit-transform" : "translateY(" + display.focus_y + "px)",
-						"transform" 				: "translateY(" + display.focus_y + "px)"
+						"-webkit-transform" : "translateY(" + display.stageY + "px)",
+						"transform" 				: "translateY(" + display.stageY + "px)"
 					};
 
-		$(".screen").css(css);
+		if(display.stageY == display.focus_y)
+		{
+			display_centerLevelEvent(null);
+		}
+
+		else
+		{
+			$(".screen").css(css);
+		}
 	}
 }
 
