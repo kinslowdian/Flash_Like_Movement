@@ -38,7 +38,7 @@ Control.prototype.init = function()
 	this.fl.spawn_x = 0;
 	this.fl.spawn_y = 0;
 
-	this.fl.move = 4;
+	this.fl.move = 40;
 	this.fl.moveX = 0;
 	this.fl.moveY = 0;
 

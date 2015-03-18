@@ -1,0 +1,12 @@
+@charset "UTF-8";
+
+.tween-controlPlayer
+{
+	-webkit-transition: -webkit-transform 500ms ease-out;
+	transition: transform 500ms ease-out;
+}
+
+.hitTest
+{
+	outline: 1px solid white;
+}
