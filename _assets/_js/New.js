@@ -286,6 +286,11 @@ function control_cssAddEvent(event)
 
 	control.animate = false;
 
+	if(control.signal === "UP" || control.signal === "DOWN")
+	{
+		display_centerLevel();
+	}
+
 	control_listen();
 }
 
