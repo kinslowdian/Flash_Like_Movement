@@ -19,6 +19,11 @@ function touch_find(event)
 			control.touch_setOffset();
 		}
 
+		if(!control.enableTouch)
+		{
+			control.enableTouch = true;
+		}
+
 		control.touchData.x = event.targetTouches[0].pageX - control.touchData.offset.left;
 		control.touchData.y = event.targetTouches[0].pageY - control.touchData.offset.top;
 
@@ -144,70 +149,13 @@ function touch_feedback()
 		}
 	}
 
-	touch_listen();
-
-	trace(control.dir);
+	control_listen();
 }
 
 
 
 // ADDED
 
-function touch_listen()
-{
-	var _x;
-	var _y;
 
-	control.signal = control.dir;
-
-	switch(control.signal)
-	{
-		case "UP":
-		{
-			_x = 0;
-			_y = -control.fl.move;
-
-			break;
-		}
-
-		case "DOWN":
-		{
-			_x = 0;
-			_y = control.fl.move;
-
-			break;
-		}
-
-		case "LEFT":
-		{
-			_x = -control.fl.move;
-			_y = 0;
-
-			break;
-		}
-
-		case "RIGHT":
-		{
-			_x = control.fl.move;
-			_y = 0;
-
-			break;
-		}
-
-		default:
-		{
-			control.signal = "STILL";
-		}
-	}
-
-	if(!control.animate && control.signal !== "STILL")
-	{
-		control.animate = true;
-
-		control.updateXY(_x, _y);
-
-		control_cssAdd();
-	}
-}
 
 

@@ -34,7 +34,7 @@ Control.prototype.touch_initPad = function(touchArea)
 {
 	this.touchArea = touchArea;
 	this.firstTouch = true;
-	this.enableTouch = true;
+	this.enableTouch = false;
 
 	this.touchData = {};
 
@@ -118,64 +118,116 @@ function control_run(run)
 
 function control_event(event)
 {
-	var _x;
-	var _y;
+	// trace(event.type);
+	var keypress = false;
+
+	if(event.type === "keydown")
+	{
+		keypress = true;
+	}
 
 	if(event.type === "keyup")
 	{
 		control.signal = "STILL";
+		keypress = false;
 	}
 
-	if(event.type === "keydown")
+	if(keypress)
 	{
 		// U
 		if(event.keyCode == 38)
 		{
 			control.signal = "UP";
-			_x = 0;
-			_y = -control.fl.move;
 		}
 
 		// D
 		else if(event.keyCode == 40)
 		{
 			control.signal = "DOWN";
-			_x = 0;
-			_y = control.fl.move;
 		}
 
 		// L
 		else if(event.keyCode == 37)
 		{
 			control.signal = "LEFT";
-			_x = -control.fl.move;
-			_y = 0;
 		}
 
 		// R
 		else if(event.keyCode == 39)
 		{
 			control.signal = "RIGHT";
-			_x = control.fl.move;
-			_y = 0;
 		}
 
 		else
 		{
 			control.signal = "STILL";
 		}
+	}
 
+	control_listen();
+}
 
-		if(!control.animate)
+function control_listen()
+{
+	var _x;
+	var _y;
+
+	if(control.enableTouch)
+	{
+		control.signal = control.dir;
+	}
+
+	switch(control.signal)
+	{
+		case "UP":
 		{
-			control.animate = true;
+			_x = 0;
+			_y = -control.fl.move;
 
-			control.updateXY(_x, _y);
+			break;
+		}
 
-			control_cssAdd();
+		case "DOWN":
+		{
+			_x = 0;
+			_y = control.fl.move;
+
+			break;
+		}
+
+		case "LEFT":
+		{
+			_x = -control.fl.move;
+			_y = 0;
+
+			break;
+		}
+
+		case "RIGHT":
+		{
+			_x = control.fl.move;
+			_y = 0;
+
+			break;
+		}
+
+		default:
+		{
+			control.signal = "STILL";
 		}
 	}
+
+	if(!control.animate && control.signal !== "STILL")
+	{
+		control.animate = true;
+
+		control.updateXY(_x, _y);
+
+		control_cssAdd();
+	}
 }
+
+
 
 function control_cssAdd()
 {
@@ -233,7 +285,7 @@ function control_cssAddEvent(event)
 
 	if(control.enableTouch)
 	{
-		touch_listen();
+		control_listen();
 	}
 }
 
