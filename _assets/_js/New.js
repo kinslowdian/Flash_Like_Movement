@@ -22,6 +22,8 @@ Control.prototype.init = function()
 	this.animate 			= false;
 
 	this.signal				= "";
+
+	this.keyChange		= false;
 }
 
 Control.prototype.updateXY = function(x, y)
@@ -118,53 +120,54 @@ function control_run(run)
 
 function control_event(event)
 {
-	// trace(event.type);
-	var keypress = false;
-
-	if(event.type === "keydown")
-	{
-		keypress = true;
-	}
-
 	if(event.type === "keyup")
 	{
 		control.signal = "STILL";
-		keypress = false;
 	}
 
-	if(keypress)
+	if(event.type === "keydown")
 	{
 		// U
-		if(event.keyCode == 38)
+		if(event.keyCode == 38 && control.signal !== "UP")
 		{
 			control.signal = "UP";
+
+			control.keyChange = true;
 		}
 
 		// D
-		else if(event.keyCode == 40)
+		else if(event.keyCode == 40 && control.signal !== "DOWN")
 		{
 			control.signal = "DOWN";
+
+			control.keyChange = true;
 		}
 
 		// L
-		else if(event.keyCode == 37)
+		else if(event.keyCode == 37 && control.signal !== "LEFT")
 		{
 			control.signal = "LEFT";
+
+			control.keyChange = true;
 		}
 
 		// R
-		else if(event.keyCode == 39)
+		else if(event.keyCode == 39 && control.signal !== "RIGHT")
 		{
 			control.signal = "RIGHT";
-		}
 
-		else
-		{
-			control.signal = "STILL";
+			control.keyChange = true;
 		}
 	}
 
-	control_listen();
+	trace(control.signal);
+
+	if(control.keyChange)
+	{
+		control.keyChange = false;
+
+		control_listen();
+	}
 }
 
 function control_listen()
@@ -283,10 +286,7 @@ function control_cssAddEvent(event)
 
 	control.animate = false;
 
-	if(control.enableTouch)
-	{
-		control_listen();
-	}
+	control_listen();
 }
 
 function hitTest_init()
