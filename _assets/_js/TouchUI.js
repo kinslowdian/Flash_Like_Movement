@@ -143,4 +143,71 @@ function touch_feedback()
 			control.walkClassUpdate(walkClass);
 		}
 	}
+
+	touch_listen();
+
+	trace(control.dir);
 }
+
+
+
+// ADDED
+
+function touch_listen()
+{
+	var _x;
+	var _y;
+
+	control.signal = control.dir;
+
+	switch(control.signal)
+	{
+		case "UP":
+		{
+			_x = 0;
+			_y = -control.fl.move;
+
+			break;
+		}
+
+		case "DOWN":
+		{
+			_x = 0;
+			_y = control.fl.move;
+
+			break;
+		}
+
+		case "LEFT":
+		{
+			_x = -control.fl.move;
+			_y = 0;
+
+			break;
+		}
+
+		case "RIGHT":
+		{
+			_x = control.fl.move;
+			_y = 0;
+
+			break;
+		}
+
+		default:
+		{
+			control.signal = "STILL";
+		}
+	}
+
+	if(!control.animate && control.signal !== "STILL")
+	{
+		control.animate = true;
+
+		control.updateXY(_x, _y);
+
+		control_cssAdd();
+	}
+}
+
+

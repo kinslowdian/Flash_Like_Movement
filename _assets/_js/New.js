@@ -24,30 +24,42 @@ Control.prototype.init = function()
 	this.signal				= "";
 }
 
-Control.prototype.updateX = function(x)
-{
-	this.fl.x_target += x;
-
-	if(this.fl.x_target != this.fl.x)
-	{
-		// this.animate = true;
-	}
-}
-
-Control.prototype.updateY = function(y)
-{
-	this.fl.y_target += y;
-
-	if(this.fl.y_target != this.fl.y)
-	{
-		// this.animate = true;
-	}
-}
-
 Control.prototype.updateXY = function(x, y)
 {
 	this.fl.x_target += x;
 	this.fl.y_target += y;
+}
+
+Control.prototype.touch_initPad = function(touchArea)
+{
+	this.touchArea = touchArea;
+	this.firstTouch = true;
+	this.enableTouch = true;
+
+	this.touchData = {};
+
+	this.touchData.moveDirection = "";
+	this.touchData.indicator			= "";
+
+	this.touchData.x_measure 		= $("#" + this.touchArea).width();
+	this.touchData.y_measure 		= $("#" + this.touchArea).height();
+}
+
+Control.prototype.touch_setOffset = function()
+{
+	this.touchData.offset = $("#" + this.touchArea).offset();
+}
+
+Control.prototype.touch_reset = function()
+{
+	this.dir = "STILL";
+	this.touchData.x_percent 		= 0;
+	this.touchData.y_percent 		= 0;
+}
+
+Control.prototype.walkClassUpdate = function(str)
+{
+
 }
 
 
@@ -58,6 +70,17 @@ function control_init()
 	control.init();
 
 	hitTest_init();
+
+	// TODO IF NEEDED
+	touch_init();
+
+	// TouchUI.js
+	$(window)[0].addEventListener("touchstart", touch_lock, false);
+}
+
+function touch_lock(event)
+{
+	event.preventDefault();
 }
 
 function control_run(run)
@@ -67,6 +90,10 @@ function control_run(run)
 		// CONTROLS
 		$(window)[0].addEventListener("keydown", control_event, false);
 		$(window)[0].addEventListener("keyup", control_event, false);
+
+		$("#touchPad-full")[0].addEventListener("touchstart", touch_find, false);
+		$("#touchPad-full")[0].addEventListener("touchmove", touch_find, false);
+		$("#touchPad-full")[0].addEventListener("touchend", touch_find, false);
 
 		// PLAYER
 		$(".player").addClass("tween-controlPlayer");
@@ -91,45 +118,61 @@ function control_run(run)
 
 function control_event(event)
 {
-	if(!control.animate && event.type === "keydown")
+	var _x;
+	var _y;
+
+	if(event.type === "keyup")
+	{
+		control.signal = "STILL";
+	}
+
+	if(event.type === "keydown")
 	{
 		// U
 		if(event.keyCode == 38)
 		{
-			control.signal = "U";
-			// control.updateY(-control.fl.move);
-			control.updateXY(0, -control.fl.move);
+			control.signal = "UP";
+			_x = 0;
+			_y = -control.fl.move;
 		}
 
 		// D
 		else if(event.keyCode == 40)
 		{
-			control.signal = "D";
-			// control.updateY(control.fl.move);
-			control.updateXY(0, control.fl.move);
+			control.signal = "DOWN";
+			_x = 0;
+			_y = control.fl.move;
 		}
 
 		// L
 		else if(event.keyCode == 37)
 		{
-			control.signal = "L";
-			// control.updateX(-control.fl.move);
-			control.updateXY(-control.fl.move, 0);
+			control.signal = "LEFT";
+			_x = -control.fl.move;
+			_y = 0;
 		}
 
 		// R
 		else if(event.keyCode == 39)
 		{
-			control.signal = "R";
-			// control.updateX(control.fl.move);
-			control.updateXY(control.fl.move, 0);
+			control.signal = "RIGHT";
+			_x = control.fl.move;
+			_y = 0;
 		}
 
-		control_cssAdd();
-
-		if(control.animate)
+		else
 		{
-			// control_cssAdd();
+			control.signal = "STILL";
+		}
+
+
+		if(!control.animate)
+		{
+			control.animate = true;
+
+			control.updateXY(_x, _y);
+
+			control_cssAdd();
 		}
 	}
 }
@@ -176,20 +219,23 @@ function control_cssAdd()
 
 		$(".hitTest").css(css);
 		hitTest_init();
+
+		control.animate = false;
 	}
 }
 
 function control_cssAddEvent(event)
 {
 	control.fl.x = control.fl.x_target;
-	ontrol.fl.y = control.fl.y_target;
+	control.fl.y = control.fl.y_target;
 
 	control.animate = false;
+
+	if(control.enableTouch)
+	{
+		touch_listen();
+	}
 }
-
-
-
-
 
 function hitTest_init()
 {
